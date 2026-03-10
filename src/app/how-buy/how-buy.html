@@ -1,0 +1,13 @@
+<div class="how-buy-container">
+  <h1 class="page-title reveal-init" #revealElement>¿Cómo Comprar?</h1>
+
+  <div class="steps">
+    @for (step of steps; track step.number; let i = $index) {
+      <div class="step reveal-init" #revealElement [style.transition-delay.ms]="i * 150">
+        <div class="step-number">{{ step.number }}</div>
+        <h3>{{ step.title }}</h3>
+        <p>{{ step.description }}</p>
+      </div>
+    }
+  </div>
+</div>

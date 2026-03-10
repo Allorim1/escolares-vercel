@@ -1,0 +1,120 @@
+<div class="marcas-admin">
+  <img src="/ESCOLARES AZUL RIF GRANDE.png" alt="Logo" style="height: 60px; display: block; margin: 0 auto 10px;">
+  <div class="header">
+    <h2>Gestión de Marcas</h2>
+    @if (isOwner()) {
+      <button class="add-btn" (click)="showAddForm()">+ Agregar Marca</button>
+    }
+  </div>
+
+  @if (message()) {
+    <div class="message" [class.error]="messageType() === 'error'">
+      {{ message() }}
+    </div>
+  }
+
+  @if (!isOwner()) {
+    <div class="message">Solo el owner puede modificar las marcas</div>
+  }
+
+  @if (isAdding()) {
+    <div class="add-form">
+      <button type="button" class="back-btn" (click)="cancelarEdicion()">← Volver</button>
+      <div class="form-group">
+        <label>Nombre de la marca</label>
+        <input
+          type="text"
+          [ngModel]="newMarcaName()"
+          (ngModelChange)="newMarcaName.set($event)"
+          placeholder="Nombre de la marca"
+          class="marca-input"
+        />
+      </div>
+      <div class="form-group">
+        <label>Imagen de la marca</label>
+        <div class="image-upload">
+          <input
+            type="file"
+            accept="image/*"
+            (change)="onFileSelected($event)"
+            class="file-input"
+            #fileInput
+          />
+          <button type="button" class="upload-btn" (click)="fileInput.click()">
+            📎 Subir imagen
+          </button>
+          @if (newMarcaImage()) {
+            <div class="image-preview">
+              <img [src]="newMarcaImage()" alt="Preview" />
+            </div>
+          }
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="save-btn" (click)="agregarMarca()">Agregar</button>
+        <button class="cancel-btn" (click)="cancelarEdicion()">Cancelar</button>
+      </div>
+    </div>
+  }
+
+  <div class="marcas-list">
+    @for (marca of marcas(); track marca.id) {
+      <div class="marca-item">
+        @if (editingIndex() === marca.id) {
+          <div class="edit-form">
+            <button type="button" class="back-btn" (click)="cancelarEdicion()">← Volver</button>
+            <input
+              type="text"
+              #editName
+              [value]="marca.name"
+              placeholder="Nombre"
+              class="edit-input"
+            />
+            <div class="image-upload">
+              <input
+                type="file"
+                accept="image/*"
+                (change)="onFileSelectedEdit($event, marca.id)"
+                class="file-input"
+                #fileInputEdit
+              />
+              <button type="button" class="upload-btn" (click)="fileInputEdit.click()">
+                📎 Cambiar imagen
+              </button>
+              @if (editImagePreview()) {
+                <div class="image-preview">
+                  <img [src]="editImagePreview()" alt="Preview" />
+                </div>
+              } @else if (marca.image) {
+                <div class="image-preview">
+                  <img [src]="marca.image" alt="Preview" />
+                </div>
+              }
+            </div>
+            <div class="actions">
+              <button class="save-btn" (click)="guardarEdicion(marca.id, editName.value)">
+                💾
+              </button>
+              <button class="cancel-btn" (click)="cancelarEdicion()">✖</button>
+            </div>
+          </div>
+        } @else {
+          <div class="marca-info">
+            @if (marca.image) {
+              <img [src]="marca.image" [alt]="marca.name" class="marca-thumb" />
+            }
+            <span class="marca-name">{{ marca.name }}</span>
+          </div>
+          @if (isOwner()) {
+            <div class="actions">
+              <button class="edit-btn" (click)="activarEdicion(marca.id)">✎</button>
+              <button class="delete-btn" (click)="eliminarMarca(marca.id)">&times;</button>
+            </div>
+          }
+        }
+      </div>
+    } @empty {
+      <div class="empty">No hay marcas registradas.</div>
+    }
+  </div>
+</div>
